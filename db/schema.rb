@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_03_102438) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_03_104931) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "matches", force: :cascade do |t|
-    t.string "title"
+    t.string "title", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -32,10 +32,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_03_102438) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "relationships", force: :cascade do |t|
+    t.bigint "player_id"
+    t.bigint "player_indicator_id"
+    t.bigint "team_id"
+    t.bigint "match_id"
+    t.boolean "mark", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_relationships_on_match_id"
+    t.index ["player_id"], name: "index_relationships_on_player_id"
+    t.index ["player_indicator_id"], name: "index_relationships_on_player_indicator_id"
+    t.index ["team_id"], name: "index_relationships_on_team_id"
+  end
+
   create_table "teams", force: :cascade do |t|
-    t.string "title"
+    t.string "title", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "relationships", "matches"
+  add_foreign_key "relationships", "player_indicators"
+  add_foreign_key "relationships", "players"
+  add_foreign_key "relationships", "teams"
 end
